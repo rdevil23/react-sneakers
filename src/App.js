@@ -20,7 +20,7 @@ function App() {
     }, []);
 
   const onAddToCart = (obj) => {
-    setCartItems(obj) === obj ? obj = null : setCartItems((prev) => [...prev, obj]);
+    setCartItems((prev) => [...prev, obj]);
   }
 
   return (

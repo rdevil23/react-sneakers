@@ -1,25 +1,32 @@
+import React from 'react';
 import Card from './components/Сard';
 import Header from './components/Header';
 import Drawer from './components/Drawer';
 
-const arr = [
-  { title: 'Nike Blazer Mid Suede', price: 150, imageUrl: '/sneakers/1.jpg'},
-  { title: 'Nike Air Max 270', price: 210, imageUrl: '/sneakers/2.jpg'},
-  { title: 'Nike Kyrie 7', price: 180, imageUrl: '/sneakers/3.jpg'},
-  { title: 'Nike Blazer Mid Suede', price: 150, imageUrl: '/sneakers/4.jpg'},
-  { title: 'Nike Lebron XVIII Low', price: 220, imageUrl: '/sneakers/5.jpg'},
-  { title: 'Under Armour Curry 8', price: 250, imageUrl: '/sneakers/6.jpg'},
-  { title: 'Jordan Air Jordan 11', price: 170, imageUrl: '/sneakers/7.jpg'},
-  { title: 'Nike Lebron XVIII', price: 270, imageUrl: '/sneakers/8.jpg'},
-  { title: 'Nike Kyrie Flytrap IV', price: 180, imageUrl: '/sneakers/9.jpg'},
-  { title: 'Puma x Aka Boku Future Rider', price: 160, imageUrl: '/sneakers/10.jpg'},
-];
 
 function App() {
+  const [items, setItems] = React.useState([]);
+  const [cartItems, setCartItems] = React.useState([]);
+  const [cartOpened, setCartOpened] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch('https://634413ceb9ab4243cadec0f9.mockapi.io/items')
+      .then((res) => {
+        return res.json();
+      })
+      .then((json) => {
+        setItems(json);
+      });
+    }, []);
+
+  const onAddToCart = (obj) => {
+    setCartItems(obj) === obj ? obj = null : setCartItems((prev) => [...prev, obj]);
+  }
+
   return (
     <div className="wrapper">
-      <Drawer />
-      <Header />
+      {cartOpened && <Drawer items={cartItems} onClickClose={() => setCartOpened(false)} />}
+      <Header onClickCart={() => setCartOpened(true)} />
 
       <div className="content">
         <div className="searchStr">
@@ -30,8 +37,14 @@ function App() {
           </div>
         </div>
         <div className="sneakers">
-          {arr.map((obj) => (
-            <Card title={obj.title} price={obj.price} imageUrl={obj.imageUrl} />
+          {items.map((item) => (
+            <Card 
+              title={item.title} 
+              price={item.price} 
+              imageUrl={item.imageUrl} 
+              // onFavorite={obj.onFavorite}
+              onAdd={(obj) => onAddToCart(obj)}
+            />
           ))}
         </div>
       </div>
